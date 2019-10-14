@@ -4,14 +4,11 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli"
 	"golang.org/x/oauth2"
@@ -19,23 +16,24 @@ import (
 )
 
 const (
-	REDIRECT_URL = "http://127.0.0.1:9999/oauth/callback"
+	OAUTH_REDIRECT_URL = "http://127.0.0.1:9999/oauth/callback"
 )
 
 var (
-	config *oauth2.Config
+	config            *oauth2.Config
+	googleOAuthScopes = []string{"https://www.googleapis.com/auth/tasks"}
+)
+
+var (
+	ctx = context.Background()
 )
 
 func doAuthorize(c *cli.Context) error {
-	if err := godotenv.Load(); err != nil {
-		return fmt.Errorf("failed to load .env file: %s", err.Error())
-	}
-
 	config = &oauth2.Config{
 		ClientID:     os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
-		RedirectURL:  REDIRECT_URL,
-		Scopes:       []string{"https://www.googleapis.com/auth/tasks"},
+		RedirectURL:  OAUTH_REDIRECT_URL,
+		Scopes:       googleOAuthScopes,
 		Endpoint:     google.Endpoint,
 	}
 
@@ -46,10 +44,11 @@ func doAuthorize(c *cli.Context) error {
 	ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
 
 	url := config.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	log.Printf("Authentication URL: %s\n", url)
+
 	time.Sleep(1 * time.Second)
 	open.Run(url)
 	time.Sleep(1 * time.Second)
-	log.Printf("Authentication URL: %s\n", url)
 
 	http.HandleFunc("/oauth/callback", callbackHandler)
 
@@ -60,43 +59,24 @@ func doAuthorize(c *cli.Context) error {
 	return nil
 }
 
-func callbackHandler(w http.ResponseWriter, r *http.Request) {
-	queryParts, _ := url.ParseQuery(r.URL.RawQuery)
-
-	code := queryParts["code"][0]
-	token, err := config.Exchange(ctx, code)
-	if err != nil {
-		log.Fatalf("failed to exchage code: %s", err.Error())
-	}
-
-	if err := saveToken(credentialFile, token); err != nil {
-		log.Fatalf("failed to save token: %s", err.Error())
-	}
-
-	msg := "<p><strong>Success!</strong></p>"
-	msg = msg + "<p>You are authenticated and can now return to the CLI.</p>"
-	fmt.Fprintf(w, msg)
-}
-
-func tokenFromFile(file string) (*oauth2.Token, error) {
-	f, err := os.Open(file)
+func loadToken(path string) (*oauth2.Token, error) {
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer file.Close()
 
 	var tok oauth2.Token
-	err = json.NewDecoder(f).Decode(&tok)
+	err = json.NewDecoder(file).Decode(&tok)
 	return &tok, err
 }
 
 func saveToken(path string, token *oauth2.Token) error {
-	fmt.Printf("Saving credential file to: %s\n", path)
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer file.Close()
 
-	return json.NewEncoder(f).Encode(token)
+	return json.NewEncoder(file).Encode(token)
 }

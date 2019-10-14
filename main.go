@@ -1,35 +1,18 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/urfave/cli"
-	"google.golang.org/api/tasks/v1"
 )
 
-const credentialFile = "credentials.json"
-
-var (
-	ctx = context.Background()
-)
-
-func getTasksClient() *tasks.Service {
-	token, err := tokenFromFile(credentialFile)
-	if err != nil {
-		log.Println("You should authorize with Google. Try authorize command.")
-		log.Fatalf("error: %s", err.Error())
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("failed to load .env file: %s", err.Error())
 	}
-
-	client := config.Client(context.Background(), token)
-
-	srv, err := tasks.New(client)
-	if err != nil {
-		log.Fatalf("Unable to retrieve tasks Client %v", err)
-	}
-	return srv
 }
 
 func main() {

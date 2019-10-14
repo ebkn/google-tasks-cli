@@ -12,7 +12,7 @@ import (
 const credentialFile = "credentials.json"
 
 var (
-	ctx context.Context
+	ctx = context.Background()
 )
 
 func getTasksClient() *tasks.Service {
@@ -32,13 +32,23 @@ func getTasksClient() *tasks.Service {
 }
 
 func main() {
-	ctx = context.Background()
-
-	app := cli.NewApp()
-	app.Name = "google-tasks-cli"
-	app.Commands = commands
-
-	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+	if err := newApp().Run(os.Args); err != nil {
+		exitCode := 1
+		if excoder, ok := err.(cli.ExitCoder); ok {
+			exitCode = excoder.ExitCode()
+		}
+		logger.Log("error", err.Error())
+		os.Exit(exitCode)
 	}
+}
+
+func newApp() *cli.App {
+	app := cli.NewApp()
+	app.Name = "google-tasks-cli (gtc)"
+	app.Usage = "Manage Google Tasks API"
+	app.Version = "0.0.1"
+	app.Author = "ebkn"
+	app.Email = "ktennis.mqekr12@gmail.com"
+	app.Commands = commands
+	return &app
 }

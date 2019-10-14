@@ -8,7 +8,7 @@ import (
 	"google.golang.org/api/tasks/v1"
 )
 
-func addTask(c *cli.Context) error {
+func doAddTask(c *cli.Context) error {
 	srv := getTasksClient()
 
 	title := c.Args().First()
@@ -34,7 +34,7 @@ func addTask(c *cli.Context) error {
 	return nil
 }
 
-func getTasks(c *cli.Context) error {
+func doListTasks(c *cli.Context) error {
 	srv := getTasksClient()
 
 	taskLists, err := srv.Tasklists.List().Do()

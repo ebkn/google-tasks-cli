@@ -26,7 +26,7 @@ var (
 	config *oauth2.Config
 )
 
-func authorize(c *cli.Context) error {
+func doAuthorize(c *cli.Context) error {
 	if err := godotenv.Load(); err != nil {
 		return fmt.Errorf("failed to load .env file: %s", err.Error())
 	}

@@ -36,27 +36,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "google-tasks-cli"
-
-	app.Commands = []cli.Command{
-		{
-			Name:        "authorize",
-			Description: "authorize with Google",
-			Action:      authorize,
-		},
-		{
-			Name:        "add",
-			Usage:       "google-tasks-cli add xxx",
-			Description: "add task",
-			Aliases:     []string{"a"},
-			Action:      addTask,
-		},
-		{
-			Name:        "list",
-			Description: "list tasks",
-			Aliases:     []string{"l"},
-			Action:      getTasks,
-		},
-	}
+	app.Commands = commands
 
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)

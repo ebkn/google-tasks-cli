@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/urfave/cli"
@@ -12,12 +13,12 @@ func doAddTask(c *cli.Context) error {
 
 	title := c.Args().First()
 	if title == "" {
-		return fmt.Errorf("no title found.")
+		return errors.New("no title found")
 	}
 
 	taskLists, err := srv.Tasklists.List().Do()
 	if err != nil {
-		fmt.Errorf("Unable to retrieve task lists. %v", err)
+		return fmt.Errorf("Unable to retrieve task lists. %s", err.Error())
 	}
 	if len(taskLists.Items) == 0 {
 		fmt.Print("No task lists found.")

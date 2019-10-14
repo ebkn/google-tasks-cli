@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	OAUTH_REDIRECT_URL = "http://127.0.0.1:9999/oauth/callback"
+	oAuthRedirectURL = "http://127.0.0.1:9999/oauth/callback"
 )
 
 var (
@@ -31,7 +31,7 @@ func doAuthorize(c *cli.Context) error {
 	config = &oauth2.Config{
 		ClientID:     os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
-		RedirectURL:  OAUTH_REDIRECT_URL,
+		RedirectURL:  oAuthRedirectURL,
 		Scopes:       googleOAuthScopes,
 		Endpoint:     google.Endpoint,
 	}

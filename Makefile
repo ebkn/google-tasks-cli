@@ -6,7 +6,7 @@ deps:
 
 .PHONY: build
 build: deps
-	go build
+	go build -o gtc
 
 .PHONY: test
 test: deps

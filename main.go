@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -37,7 +38,7 @@ func main() {
 		if excoder, ok := err.(cli.ExitCoder); ok {
 			exitCode = excoder.ExitCode()
 		}
-		logger.Log("error", err.Error())
+		fmt.Printf("error: %s", err.Error())
 		os.Exit(exitCode)
 	}
 }
@@ -50,5 +51,5 @@ func newApp() *cli.App {
 	app.Author = "ebkn"
 	app.Email = "ktennis.mqekr12@gmail.com"
 	app.Commands = commands
-	return &app
+	return app
 }

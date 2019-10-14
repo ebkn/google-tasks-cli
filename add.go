@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/urfave/cli"
 	"google.golang.org/api/tasks/v1"
@@ -18,7 +17,7 @@ func doAddTask(c *cli.Context) error {
 
 	taskLists, err := srv.Tasklists.List().Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve task lists. %v", err)
+		fmt.Errorf("Unable to retrieve task lists. %v", err)
 	}
 	if len(taskLists.Items) == 0 {
 		fmt.Print("No task lists found.")

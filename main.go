@@ -9,13 +9,11 @@ import (
 	"github.com/urfave/cli"
 )
 
-func init() {
+func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("failed to load .env file: %s", err.Error())
 	}
-}
 
-func main() {
 	if err := newApp().Run(os.Args); err != nil {
 		exitCode := 1
 		if excoder, ok := err.(cli.ExitCoder); ok {

@@ -7,10 +7,8 @@ import (
 	"google.golang.org/api/tasks/v1"
 )
 
-const credentialFileName = "credentials.json"
-
 func getTasksClient() *tasks.Service {
-	token, err := loadToken(credentialFileName)
+	token, err := loadToken()
 	if err != nil {
 		log.Println("You should authorize with Google. Try authorize command.")
 		log.Fatalf("error: %s", err.Error())

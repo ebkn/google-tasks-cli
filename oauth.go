@@ -16,7 +16,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("failed to exchage code: %s", err.Error())
 	}
 
-	if err := saveToken(credentialFileName, token); err != nil {
+	if err := saveToken(token); err != nil {
 		log.Fatalf("failed to save token: %s", err.Error())
 	}
 

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -57,26 +56,4 @@ func doAuthorize(c *cli.Context) error {
 		log.Fatal(err)
 	}
 	return nil
-}
-
-func loadToken(path string) (*oauth2.Token, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var tok oauth2.Token
-	err = json.NewDecoder(file).Decode(&tok)
-	return &tok, err
-}
-
-func saveToken(path string, token *oauth2.Token) error {
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	return json.NewEncoder(file).Encode(token)
 }

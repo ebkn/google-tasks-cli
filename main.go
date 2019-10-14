@@ -39,9 +39,22 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:   "authorize",
-			Usage:  "authorize with Google",
-			Action: authorize,
+			Name:        "authorize",
+			Description: "authorize with Google",
+			Action:      authorize,
+		},
+		{
+			Name:        "add",
+			Usage:       "google-tasks-cli add xxx",
+			Description: "add task",
+			Aliases:     []string{"a"},
+			Action:      addTask,
+		},
+		{
+			Name:        "list",
+			Description: "list tasks",
+			Aliases:     []string{"l"},
+			Action:      getTasks,
 		},
 	}
 
